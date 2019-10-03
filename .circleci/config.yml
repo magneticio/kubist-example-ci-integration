@@ -1,0 +1,72 @@
+version: 2
+jobs:
+  build:
+    docker:
+    - image: circleci/golang:1.12.3
+    steps:
+    - checkout
+    - run: go test ./...
+  release:
+    docker:
+    - image: magneticio/kubist-util:latest
+      environment:
+          NAMESPACE: kubist-example
+          VAMP_PROJECT: project1
+          VAMP_CLUSTER: cluster1
+    steps:
+    - checkout
+    - setup_remote_docker:
+          docker_layer_caching: true
+    - run:
+        name: "Setup vamp"
+        command: |
+          vamp config set -p $VAMP_PROJECT -c $VAMP_CLUSTER -r $NAMESPACE
+          vamp login --url $VAMP_URL --user $VAMP_USER --token $VAMP_TOKEN --cert $VAMP_CERT
+    - run:
+        name: "Setup kubectl"
+        command: |
+          URL=$(vamp get cluster cluster1 -p project1 --jsonpath '$.specification.metadata.url' --wait --number-of-tries 20)
+          CACERT_BASE64=$(vamp get cluster cluster1 -p project1 --jsonpath '$.specification.metadata.cacertdata' --wait --number-of-tries 20)
+          TOKEN_BASE64=$(vamp get cluster cluster1 -p project1 --jsonpath '$.specification.metadata.serviceaccount_token' --wait --number-of-tries 20)
+          echo $CACERT_BASE64 | base64 -d  > ca.crt
+          echo $TOKEN_BASE64 | base64 -d  > token.txt
+          kubectl config set-cluster cfc --server=$URL --certificate-authority=ca.crt
+          kubectl config set-context cfc --cluster=cfc --namespace=$NAMESPACE
+          TOKEN=$(cat token.txt)
+          USER_ID=default
+          kubectl config set-credentials $USER_ID --token=$TOKEN
+          kubectl config set-context cfc --user=$USER_ID
+          kubectl config use-context cfc
+    - run:
+        name: "Build and upload image"
+        command: |
+          VERSION=$CIRCLE_TAG
+          docker login -u $DOCKER_USER -p $DOCKER_PASS
+          docker build -t magneticio/kubist-example-ci-integration:$VERSION .
+          docker push magneticio/kubist-example-ci-integration:$VERSION
+      - run:
+          name: "Deploy"
+          command: |
+            VERSION=$CIRCLE_TAG
+            helm template achart --set image.tag=$VERSION | kubectl apply -f -
+      - run:
+          name: "Trigger release"
+          command: |
+            VERSION=$CIRCLE_TAG
+            vamp release kubist-example-service --destination kubist-example-destination --subset $VERSION -l version=$VERSION
+workflows:
+  version: 2
+  main:
+    jobs:
+    - build:
+        filters:
+          tags:
+            only: /^(v)\d+\.\d+\.\d+$/
+    - release:
+        requires:
+        - build
+        filters:
+          branches:
+            ignore: /.*/
+          tags:
+            only: /^(v)\d+\.\d+\.\d+$/
