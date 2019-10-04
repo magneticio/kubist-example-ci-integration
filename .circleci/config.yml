@@ -21,7 +21,8 @@ jobs:
         name: "Setup vamp"
         command: |
           vamp config set -p $VAMP_PROJECT -c $VAMP_CLUSTER -r $NAMESPACE
-          vamp login --url $VAMP_URL --user $VAMP_USER --token $VAMP_TOKEN --cert $VAMP_CERT
+          echo $VAMP_CERT_BASE64 | base64 -d  > vamp.crt
+          vamp login --url $VAMP_URL --user $VAMP_USER --token $VAMP_TOKEN --cert vamp.crt
     - run:
         name: "Setup kubectl"
         command: |
