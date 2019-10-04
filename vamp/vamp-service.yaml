@@ -1,0 +1,9 @@
+exposeInternally: true
+hosts:
+routes:
+- protocol: http
+  weights:
+  - destination: kubist-example-destination
+    port: 8080
+    version: v0.0.3
+    weight: 100

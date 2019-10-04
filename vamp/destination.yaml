@@ -1,0 +1,10 @@
+application: kubist-example
+ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP
+subsets:
+  v0.0.3:
+    labels:
+      version: v0.0.3
