@@ -44,16 +44,16 @@ jobs:
           docker login -u $DOCKER_USER -p $DOCKER_PASS
           docker build -t magneticio/kubist-example-ci-integration:$VERSION .
           docker push magneticio/kubist-example-ci-integration:$VERSION
-      - run:
-          name: "Deploy"
-          command: |
-            VERSION=$CIRCLE_TAG
-            helm template achart --set image.tag=$VERSION | kubectl apply -f -
-      - run:
-          name: "Trigger release"
-          command: |
-            VERSION=$CIRCLE_TAG
-            vamp release kubist-example-service --destination kubist-example-destination --subset $VERSION -l version=$VERSION
+    - run:
+        name: "Deploy"
+        command: |
+          VERSION=$CIRCLE_TAG
+          helm template achart --set image.tag=$VERSION | kubectl apply -f -
+    - run:
+        name: "Trigger release"
+        command: |
+          VERSION=$CIRCLE_TAG
+          vamp release kubist-example-service --destination kubist-example-destination --subset $VERSION -l version=$VERSION
 workflows:
   version: 2
   main:
