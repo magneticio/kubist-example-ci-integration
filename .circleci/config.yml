@@ -54,7 +54,7 @@ jobs:
         name: "Trigger release"
         command: |
           VERSION=$CIRCLE_TAG
-          vamp release kubist-example-service --destination kubist-example-destination --subset $VERSION -l version=$VERSION
+          vamp release kubist-example-service --destination kubist-example-destination --subset $VERSION -l version=$VERSION --type health --period 30000 --step 10
 workflows:
   version: 2
   main:
