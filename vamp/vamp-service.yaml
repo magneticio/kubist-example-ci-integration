@@ -5,5 +5,5 @@ routes:
   weights:
   - destination: kubist-example-destination
     port: 8080
-    version: v0.0.1
+    version: v0_0_1
     weight: 100

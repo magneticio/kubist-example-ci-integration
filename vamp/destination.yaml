@@ -5,6 +5,6 @@ ports:
     targetPort: 8080
     protocol: TCP
 subsets:
-  v0.0.1:
+  v0_0_1:
     labels:
       version: v0.0.1
