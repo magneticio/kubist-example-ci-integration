@@ -1,8 +1,7 @@
-exposeInternally: true
+exposeInternally: false
 gateways:
   - kubist-example-gateway
 hosts:
-- "35.240.62.159"
 routes:
 - protocol: http
   weights:
