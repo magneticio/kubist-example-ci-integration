@@ -8,7 +8,7 @@ jobs:
     - run: go test ./...
   release:
     docker:
-    - image: magneticio/kubist-util:latest
+    - image: magneticio/kubist-util:v0.0.1
       environment:
           NAMESPACE: kubist-example
           VAMP_PROJECT: project1

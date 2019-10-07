@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 )
+
+var versionEnvVar string
 
 func ready(w http.ResponseWriter, req *http.Request) {
 
@@ -20,6 +23,11 @@ func index(w http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(w, "OK\n")
 }
 
+func version(w http.ResponseWriter, req *http.Request) {
+
+	fmt.Fprintf(w, fmt.Sprintf("%v\n", versionEnvVar))
+}
+
 func headers(w http.ResponseWriter, req *http.Request) {
 
 	for name, headers := range req.Header {
@@ -31,9 +39,12 @@ func headers(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 
+	versionEnvVar = os.Getenv("VERSION")
+
 	http.HandleFunc("/", index)
 	http.HandleFunc("/healty", healty)
 	http.HandleFunc("/ready", ready)
+	http.HandleFunc("/version", version)
 	http.HandleFunc("/headers", headers)
 
 	http.ListenAndServe(":8080", nil)
