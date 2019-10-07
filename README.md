@@ -103,6 +103,10 @@ Get your user credentials by running:
 ```shell
 $ vamp config get
 ```
+
+It is recommended to create a service account to use with ci tools.
+A documentation will be added on how to create service accounts.
+
 You need these variables to set up in the circle ci as env variables:
 * url should be stored as VAMP_URL
 * token should be stored as VAMP_TOKEN
