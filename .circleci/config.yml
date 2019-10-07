@@ -55,8 +55,7 @@ jobs:
         command: |
           VERSION=$CIRCLE_TAG
           SUBSET="${VERSION//./-}"
-          vamp version
-          vamp release kubist-example-service --destination kubist-example-destination --subset $SUBSET -l version=$VERSION --type health --period 30000 --step 10 -v
+          vamp release kubist-example-service --destination kubist-example-destination --subset $SUBSET -l version=$VERSION --type health --period 30000 --step 10
 workflows:
   version: 2
   main:
