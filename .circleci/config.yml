@@ -8,7 +8,7 @@ jobs:
     - run: go test ./...
   release:
     docker:
-    - image: magneticio/kubist-util:v0.0.2
+    - image: magneticio/kubist-util:v0.0.3
       environment:
           NAMESPACE: kubist-example
           VAMP_PROJECT: project1
@@ -56,7 +56,7 @@ jobs:
           VERSION=$CIRCLE_TAG
           SUBSET="${VERSION//./-}"
           vamp delete canaryrelease kubist-example-service
-          vamp release kubist-example-service --destination kubist-example-destination --subset $SUBSET -l version=$VERSION --type health --period 30000 --step 10
+          vamp release kubist-example-service --destination kubist-example-destination --subset $SUBSET -l version=$VERSION --type health --period 30000 --step 10 --notify info
 workflows:
   version: 2
   main:
