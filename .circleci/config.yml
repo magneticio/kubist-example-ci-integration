@@ -55,7 +55,7 @@ jobs:
         command: |
           VERSION=$CIRCLE_TAG
           SUBSET="${VERSION//./-}"
-          vamp delete canaryrelease kubist-example-service
+          vamp delete canaryrelease kubist-example-service || echo "deletion can fail on first release"
           vamp release kubist-example-service --destination kubist-example-destination --subset $SUBSET -l version=$VERSION --type health --period 30000 --step 10 --notify info
 workflows:
   version: 2
