@@ -57,9 +57,15 @@ $ vamp create virtualcluster kubist-example --init
 ```
 
 Now deploy first version of our application. This application has a helm template and we will use helm template and kubectl approach to deploy this application:
-
+Note: It is important that resource names doesn't include dots ("."). In the example helm chart "." are replaced with "-".
 ```shell
 $ helm template achart --set image.tag=v0.0.1 | kubectl apply -n kubist-example -f -
+```
+
+
+Set context to kubist-example
+```shell
+$ vamp config set -r kubist-example
 ```
 
 We are using the image tag to define version.
